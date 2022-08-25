@@ -79,7 +79,7 @@ ul li{list-style: none;}
   box-shadow: inset 2px 2px 5px rgba(154, 147, 140, 0.5), 1px 1px 5px rgba(255, 255, 255, 1);;
 }
 
-.compexity-container {
+.complexity-container {
   width: 20%;
   font-family: 'Arial', sans-serif;
   font-size: 16px;
@@ -87,6 +87,11 @@ ul li{list-style: none;}
   text-transform: uppercase;
   padding: 10px;
   margin: auto;
+  visibility: visible;
+}
+
+.transparent {
+  visibility: hidden;
 }
 
 h2 {
@@ -104,6 +109,7 @@ border-radius: 10px;
 text-align: center;
 padding-top: 10px;
 }
+
 
 .complexity:hover {
   border: 2px rgb(31, 30, 44) solid;
@@ -195,7 +201,7 @@ padding-top: 10px;
   display: none;
 }
 
-.pack-back img {
+.pack-back img, .card-face img {
   width: 100%;
   height: auto;
   border-radius: 10px;
