@@ -23,8 +23,37 @@ let objectStages = {}
 let first
 let second
 let third
-let a
- 
+
+let greenCards = cardsDataGreen
+let brownCards = cardsDataBrown
+let blueCards = cardsDataBlue
+
+
+let greenCardsTwo
+let brownCardsTwo
+let blueCardsTwo
+
+
+let greenCardsThree
+let brownCardsThree
+let blueCardsThree
+
+
+
+Array.prototype.diff = function(x) {
+  return this.filter(function(i) {return x.indexOf(i) < 0;});
+};
+
+
+function changeClassAcient (item) {
+  if (!isChosen) {
+    item.classList.remove('aactive')
+  } else {
+    item.classList.add('aactive')
+  }
+}
+
+
 function changeAcient (event) {
   let clickedItem = event.target
   acientId.forEach(el => { 
@@ -39,9 +68,6 @@ function changeAcient (event) {
     changeClassAcient(item)
     changeClassDiff ()
     getArray ()
-    a = first
-      a.forEach((el) => {
-      el.stage = 'firstStage'}) 
 
     chosenCards = [...objectStages['firstStage'], ...objectStages['secondStage'],...sortCards(objectStages['thirdStage'])].reverse()
     diffBtn.forEach(el => el.addEventListener('click', ()=> {
@@ -56,7 +82,7 @@ function changeAcient (event) {
     changeClassRest ()
     tossBtn.removeEventListener('click', tossPack)
     cardFace.classList.add('hidden')
-    cardBack.removeEventListener('click', showCard3)
+    cardBack.removeEventListener('click', showCard)
   }
   
   }
@@ -65,28 +91,28 @@ function changeAcient (event) {
     changeClassRest()
     restNumber.innerHTML = addHTML()
     cardFace.classList.add('hidden')
-    cardBack.addEventListener('click', showCard3)
+    cardBack.addEventListener('click', showCard)
   }
 
 function getArray () {
   first = getFirstStage()
   second = getSecondStage()
   third = getThirdStage()
-  objectStages.firstStage = first
-  objectStages.secondStage = second
-  objectStages.thirdStage = third
+
+
+  first.forEach((el) => {
+    el.stage = 'firstStage'}) 
+  second.forEach((el) => {
+    el.stage = 'secondStage'}) 
+  third.forEach((el) => {
+    el.stage = 'thirdStage'}) 
+
+
+  objectStages.firstStage = sortCards(first)
+  objectStages.secondStage = sortCards(second)
+  objectStages.thirdStage = sortCards(third)
   return objectStages
 }
-
-
-function changeClassAcient (item) {
-  if (!isChosen) {
-    item.classList.remove('aactive')
-  } else {
-    item.classList.add('aactive')
-  }
-}
-
 
 
 function changeClassDiff () {
@@ -123,7 +149,7 @@ function setPackRule () {
   let combination = []
   let a = document.querySelector('.aactive')
   if (a.id!== null && a.id!== undefined) { 
- // chosenAcient = a.id
+
   let stagePack = ancientsData.find(el => el.name === a.id)
   combination.push(stagePack['firstStage'], stagePack['secondStage'], stagePack['thirdStage'])
   return combination
@@ -152,27 +178,36 @@ return sortedArray
 }
 
 //копирование массивов для изменений
-let greenCards = cardsDataGreen
-let brownCards = cardsDataBrown
-let blueCards = cardsDataBlue
+
 
 function getFirstStage() {
  let a = setPackRule()
   let arrayFirstStage = []
+
   let green = sortCards(greenCards).slice(0, a[0]['greenCards'])
   let brown = sortCards(brownCards).slice(0, a[0]['brownCards'])
   let blue = sortCards(blueCards).slice(0, a[0]['blueCards'])
   arrayFirstStage = green.concat(brown, blue)
+  
+ greenCardsTwo = greenCards.diff(green)
+ brownCardsTwo = brownCards.diff(brown)
+ blueCardsTwo = blueCards.diff(blue)
+
   return arrayFirstStage
 }
 
 function getSecondStage() {
   let a = setPackRule()
+
    let arraySecondStage = []
-   let green = sortCards(greenCards).slice(0, a[1]['greenCards'])
-   let brown = sortCards(brownCards).slice(0, a[1]['brownCards'])
-   let blue = sortCards(blueCards).slice(0, a[1]['blueCards'])
+   let green = sortCards(greenCardsTwo).slice(0, a[1]['greenCards'])
+   let brown = sortCards(brownCardsTwo).slice(0, a[1]['brownCards'])
+   let blue = sortCards(blueCardsTwo).slice(0, a[1]['blueCards'])
    arraySecondStage = green.concat(brown, blue)
+
+   greenCardsThree = greenCardsTwo.diff(green)
+   brownCardsThree = brownCardsTwo.diff(brown)
+   blueCardsThree = blueCardsTwo.diff(blue)
    return arraySecondStage
  }
 
@@ -180,9 +215,9 @@ function getSecondStage() {
  function getThirdStage() {
   let a = setPackRule()
    let arrayThirdStage = []
-   let green = sortCards(greenCards).slice(0, a[2]['greenCards'])
-   let brown = sortCards(brownCards).slice(0, a[2]['brownCards'])
-   let blue = sortCards(blueCards).slice(0, a[2]['blueCards'])
+   let green = sortCards(greenCardsThree).slice(0, a[2]['greenCards'])
+   let brown = sortCards(brownCardsThree).slice(0, a[2]['brownCards'])
+   let blue = sortCards(blueCardsThree).slice(0, a[2]['blueCards'])
    arrayThirdStage = green.concat(brown, blue)
    return arrayThirdStage
  }
@@ -205,90 +240,51 @@ function addHTML () {
     <p class="stage">I этап</p> 
     <div class="rest-green">
       <img src="./assets/MythicCards/greenCard.png">
-      <p class="number">${getLength(first, 'green')}</p>
+      <p class="number">${getLength2(chosenCards, 'green', 'firstStage')}</p>
     </div>
     <div class="rest-brown">
       <img src="./assets/MythicCards/brownCard.png">
-      <p class="number">${getLength(first, 'brown')}</p>
+      <p class="number">${getLength2(chosenCards, 'brown', 'firstStage')}</p>
     </div>
     <div class="rest-blue">
       <img src="./assets/MythicCards/blueCard.png">
-      <p class="number">${getLength(first, 'blue')}</p>
+      <p class="number">${getLength2(chosenCards, 'blue', 'firstStage')}</p>
     </div>
   </div>
   <div class="rest-second">
     <p class="stage">II этап</p> 
     <div class="rest-green">
       <img src="./assets/MythicCards/greenCard.png">
-      <p class="number">${getLength(second, 'green')}</p>
+      <p class="number">${getLength2(chosenCards, 'green', 'secondStage')}</p>
     </div>
     <div class="rest-brown">
       <img src="./assets/MythicCards/brownCard.png">
-      <p class="number">${getLength(second, 'brown')}</p>
+      <p class="number">${getLength2(chosenCards, 'brown', 'secondStage')}</p>
     </div>
     <div class="rest-blue">
       <img src="./assets/MythicCards/blueCard.png">
-      <p class="number">${getLength(second, 'blue')}</p>
+      <p class="number">${getLength2(chosenCards, 'blue', 'secondStage')}</p>
     </div>
   </div>
   <div class="rest-third">
     <p class="stage">III этап</p> 
     <div class="rest-green">
       <img src="./assets/MythicCards/greenCard.png">
-      <p class="number">${getLength(third, 'green')}</p>
+      <p class="number">${getLength2(chosenCards, 'green', 'thirdStage')}</p>
     </div>
     <div class="rest-brown">
       <img src="./assets/MythicCards/brownCard.png">
-      <p class="number">${getLength(third, 'brown')}</p>
+      <p class="number">${getLength2(chosenCards, 'brown', 'thirdStage')}</p>
     </div>
     <div class="rest-blue">
       <img src="./assets/MythicCards/blueCard.png">
-      <p class="number">${getLength(third, 'blue')}</p>
+      <p class="number">${getLength2(chosenCards, 'blue', 'thirdStage')}</p>
     </div>
     </div>`
   return b
 }
-/*
-function showCard (object) {
-cardFace.classList.remove('hidden')
-let src
 
- let first = object['firstStage']
- let second = object['secondStage']
- let third = object['thirdStage']
-
- if (first.length != 0) {
-  let i = getRandomNum(0, first.length-1)
-  src = first[i]['cardFace']
-  first.slice(i, 1)
-  } 
- cardFace.innerHTML = `<img src=${src} alt="pack face">`
-}
-
-//cardBack.addEventListener('click', showCard)
-
-
-//перебор по ключам объекта - стадии
-function showCard2 () {
-  cardFace.classList.remove('hidden')
-  let src
-   let first = objectStages['firstStage']
-   let second = objectStages['secondStage']
-   let third = objectStages['thirdStage']
-   
-   for (let stages in objectStages) {
-     for (let j = 0; j < objectStages[stages].length; j++) {
-      let i = getRandomNum(0, objectStages[stages].length-1)
-      src = objectStages[stages][i]['cardFace']
-      objectStages[stages].splice(i, 1) 
-    }
-  cardFace.innerHTML = `<img src=${src} alt="pack face">`
-   }
- }
-
-  */
-
- function showCard3 () {
+ function showCard () {
   cardFace.classList.remove('hidden')
   let src
   let id 
@@ -299,11 +295,14 @@ function showCard2 () {
     id = chosenCards[chosenCards.length-1]['id']
     stage = chosenCards[chosenCards.length-1]['stage']
     chosenCards.pop()
+    restNumber.innerHTML = addHTML()
+
+
   } else {
     cardFace.classList.add('hidden')
     restNumber.style.display = 'none'
     src = "./assets/mythicCardBackground.png"
-    cardBack.removeEventListener('click', showCard3)
+    cardBack.removeEventListener('click', showCard)
     acientId.forEach(el => { 
       el.firstChild.classList.remove('aactive')
       isChosen = false
