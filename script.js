@@ -18,7 +18,7 @@ let difficultyLevel
 let isChosen = false
 let diffChosen = false
 
-acient.addEventListener('click', changeAcient)
+
 let chosenCards 
 let objectStages = {}
 let first
@@ -39,7 +39,7 @@ let greenCardsThree
 let brownCardsThree
 let blueCardsThree
 
-
+acient.addEventListener('click', changeAcient)
 
 Array.prototype.diff = function(x) {
   return this.filter(function(i) {return x.indexOf(i) < 0;});
@@ -56,6 +56,11 @@ function changeClassAcient (item) {
 
 
 function changeAcient (event) {
+ greenCards = cardsDataGreen
+ brownCards = cardsDataBrown
+ blueCards = cardsDataBlue
+
+
   let clickedItem = event.target
   acientId.forEach(el => { 
     el.firstChild.classList.remove('aactive')
@@ -82,6 +87,8 @@ function changeAcient (event) {
     tossBtn.removeEventListener('click', tossPack)
     cardFace.classList.add('hidden')
     cardBack.removeEventListener('click', showCard)
+    complex.removeEventListener('click', changeDifficulty)
+    tossblock.classList.add('transparent')
   }
 }
 
@@ -93,20 +100,17 @@ function changeAcient (event) {
       getArrayNormal()
       chosenCards = [...objectStages['firstStage'], ...objectStages['secondStage'],...sortCards(objectStages['thirdStage'])].reverse()
     } else if (difficultyLevel === 'easy') {
-      
       getArrayEasy()
       chosenCards = [...objectStages['firstStage'], ...objectStages['secondStage'],...sortCards(objectStages['thirdStage'])].reverse()
  
   } else if (difficultyLevel === 'hard') {
-      
     getArrayHard()
     chosenCards = [...objectStages['firstStage'], ...objectStages['secondStage'],...sortCards(objectStages['thirdStage'])].reverse()
-  
 } 
     else {
-      getArrayNormal()
-      chosenCards = [...objectStages['firstStage'], ...objectStages['secondStage'],...sortCards(objectStages['thirdStage'])].reverse()
-    }
+    getArrayNormal()
+    chosenCards = [...objectStages['firstStage'], ...objectStages['secondStage'],...sortCards(objectStages['thirdStage'])].reverse()
+    tossBtn.removeEventListener('click', tossPack)}
     restNumber.innerHTML = addHTML()
   }
 
@@ -311,17 +315,24 @@ function addHTML () {
     stage = chosenCards[chosenCards.length-1]['stage']
     chosenCards.pop()
     restNumber.innerHTML = addHTML()
-
-
-  } else {
-    cardFace.classList.add('hidden')
+} else {
+   /* cardFace.classList.add('hidden')
     restNumber.style.display = 'none'
-    src = "./assets/mythicCardBackground.png"
+    
     cardBack.removeEventListener('click', showCard)
+    tossBtn.removeEventListener('click', tossPack)*/
+    tossblock.classList.add('transparent')
+    complex.classList.add('transparent')
+    src = "./assets/mythicCardBackground.png"
     acientId.forEach(el => { 
       el.firstChild.classList.remove('aactive')
-      isChosen = false
-    })
+      isChosen = false})
+    diffBtn.forEach(el => {
+      el.classList.remove('aactive')
+      diffChosen = false
+    }) 
+    cardBack.removeEventListener('click', showCard)
+    complex.removeEventListener('click', changeDifficulty)
   }
 cardFace.innerHTML = `<img src=${src} alt="pack face">`
 }
@@ -336,11 +347,7 @@ return total}, 0)
 return newArray}
 
 
-
-
-
 function changeDifficulty (event) {
- 
   diffBtn.forEach(el => {
     el.classList.remove('aactive')
     diffChosen = false
@@ -349,31 +356,22 @@ function changeDifficulty (event) {
     cardFace.classList.add('hidden')
   }) 
 
-let clickedDifficulty = event.target
-let clickedBtn = document.getElementById(clickedDifficulty.id)
+  let clickedDifficulty = event.target
+  let clickedBtn = document.getElementById(clickedDifficulty.id)
 
  if (clickedBtn!== null && clickedBtn!==undefined) {
    changeClassBtn(clickedBtn)
    difficultyLevel = clickedBtn.id
    diffChosen = true 
-
- /*     if (difficultyLevel === 'normal') {
-        getArrayNormal()
-        chosenCards = [...objectStages['firstStage'], ...objectStages['secondStage'],...sortCards(objectStages['thirdStage'])].reverse()
-      } else {
-        getArrayNormal()
-        chosenCards = [...objectStages['firstStage'], ...objectStages['secondStage'],...sortCards(objectStages['thirdStage'])].reverse()
-      }*/
-      tossblock.classList.remove('transparent')
-      tossBtn.addEventListener('click', tossPack)
-    }
-      else {
-        diffChosen = false
-        tossBtn.removeEventListener('click', tossPack)
-      }
+   tossblock.classList.remove('transparent')
+   tossBtn.addEventListener('click', tossPack)
+  }
+   else {
+    diffChosen = false
+    tossBtn.removeEventListener('click', tossPack)
+    tossblock.classList.add('transparent')
+  }
 }
-
-
 
 function getArrayEasy () {
 
