@@ -9,7 +9,7 @@ const acientId = document.querySelectorAll('.acient')
 const tossBtn = document.querySelector('.toss-pack')
 const diffBtn = document.querySelectorAll('.complexity')
 const restNumber = document.querySelector('.rest')
-const container = document.querySelector('.container')
+
 const cardFace = document.querySelector('.card-face')
 const cardBack = document.querySelector('.pack-back')
 const complex = document.querySelector('.complexity-container')
@@ -45,7 +45,6 @@ Array.prototype.diff = function(x) {
   return this.filter(function(i) {return x.indexOf(i) < 0;});
 };
 
-
 function changeClassAcient (item) {
   if (!isChosen) {
     item.classList.remove('aactive')
@@ -53,7 +52,6 @@ function changeClassAcient (item) {
     item.classList.add('aactive')
   }
 }
-
 
 function changeAcient (event) {
  greenCards = cardsDataGreen
@@ -67,9 +65,8 @@ function changeAcient (event) {
     isChosen = false
     changeDiffBtn()
   })
+  changeClassDiff ()
 
-  changeClassRest ()
-  cardFace.classList.add('hidden')
   let item = document.getElementById(clickedItem.id)
 
   if (item!== null && item!==undefined) {
@@ -82,39 +79,31 @@ function changeAcient (event) {
   else {
     isChosen = false
     changeClassDiff ()
-    changeClassRest ()
-    tossBtn.removeEventListener('click', tossPack)
-    cardFace.classList.add('hidden')
-    cardBack.removeEventListener('click', showCard)
-    complex.removeEventListener('click', changeDifficulty)
-    tossblock.classList.add('transparent')
   }
 }
 
+//замешиваем колоду при нажатии на кнопку
   function tossPack () {
-    changeClassRest()
+    changeClassDiff ()
+
     cardFace.classList.add('hidden')
     cardBack.addEventListener('click', showCard)
   
     if (difficultyLevel === 'normal') {
       getArrayNormal()
-      chosenCards = [...objectStages['firstStage'], ...objectStages['secondStage'],...sortCards(objectStages['thirdStage'])].reverse()
+  
+      } else if (difficultyLevel === 'easy') {
+      getArrayEasy() 
+  
+      } else if (difficultyLevel === 'hard') {
+      getArrayHard()
+  
+      } else if (difficultyLevel === 'too-hard') {
+      getArrayTooEasyHard()
+      } else {
+      getArrayTooEasyHard()
     }
-     else if (difficultyLevel === 'easy') {
-      getArrayEasy()
-      chosenCards = [...objectStages['firstStage'], ...objectStages['secondStage'],...sortCards(objectStages['thirdStage'])].reverse()
- 
-  } 
-  else if (difficultyLevel === 'hard') {
-    getArrayHard()
-    chosenCards = [...objectStages['firstStage'], ...objectStages['secondStage'],...sortCards(objectStages['thirdStage'])].reverse()
-} else if (difficultyLevel === 'too-hard') {
-  getArrayTooEasyHard()
-  chosenCards = [...objectStages['firstStage'], ...objectStages['secondStage'],...sortCards(objectStages['thirdStage'])].reverse()
-} else {
-  getArrayTooEasyHard()
-  chosenCards = [...objectStages['firstStage'], ...objectStages['secondStage'],...sortCards(objectStages['thirdStage'])].reverse()
-}
+    chosenCards = [...objectStages['firstStage'], ...objectStages['secondStage'],...sortCards(objectStages['thirdStage'])].reverse()    
     restNumber.innerHTML = addHTML()
   }
 
@@ -122,7 +111,7 @@ function getArrayNormal () {
   first = getFirstStage()
   second = getSecondStage()
   third = getThirdStage()
-
+//добавляем в объект параметр стадии для счетчика
   first.forEach((el) => {
     el.stage = 'firstStage'}) 
   second.forEach((el) => {
@@ -136,32 +125,27 @@ function getArrayNormal () {
   return objectStages
 }
 
-
+//меняем класс у блоков сложности и колоды при выборе древнего
 function changeClassDiff () {
 if (!isChosen) {
   complex.classList.add('transparent')
+  restNumber.style.display = 'none'
+  cardFace.classList.add('hidden')
 } else {
-  complex.classList.remove('transparent')}
+  complex.classList.remove('transparent')
+  restNumber.style.display = 'block'}
 }
-  
+
+//меняем класс у кнопок сложности при переключении
 function changeClassBtn(item) {
   if (!diffChosen) {
   item.classList.add('aactive')
-} else {
- item.classList.remove('aactive')
-}
-}
-
-
-function changeClassRest () {
-  if(!isChosen) {
-    restNumber.style.display = 'none'
- } else {
-   restNumber.style.display = 'block'
- }
+  } else {
+  item.classList.remove('aactive')
+  }
 }
 
-//находим комбинацию  и количество карт по цветам древнего
+//находим комбинацию  и количество карт по цветам при выборе древнего
 function setPackRule () {
   let combination = []
   let a = document.querySelector('.aactive')
@@ -174,7 +158,6 @@ function setPackRule () {
     return
   }
 }
-
 
 //функция сортировки по Фишеру
 function sortCards (array) {
@@ -197,9 +180,9 @@ function getFirstStage() {
   let blue = sortCards(blueCards).slice(0, a[0]['blueCards'])
   arrayFirstStage = green.concat(brown, blue)
   
- greenCardsTwo = greenCards.diff(green)
- brownCardsTwo = brownCards.diff(brown)
- blueCardsTwo = blueCards.diff(blue)
+  greenCardsTwo = greenCards.diff(green)
+  brownCardsTwo = brownCards.diff(brown)
+  blueCardsTwo = blueCards.diff(blue)
 
   return arrayFirstStage
 }
@@ -219,8 +202,7 @@ function getSecondStage() {
    return arraySecondStage
  }
 
-
- function getThirdStage() {
+function getThirdStage() {
   let a = setPackRule()
    let arrayThirdStage = []
    let green = sortCards(greenCardsThree).slice(0, a[2]['greenCards'])
@@ -230,63 +212,50 @@ function getSecondStage() {
    return arrayThirdStage
  }
 
- function concatArrays (one, two, three) {
-  return one.concat(two, three)
- }
-
-
- function getLength(array, color) {
-  let newArray = array.reduce((total, el) => {
-  if (el['color'] === color) {
-    total += 1
-  } else {total}
-return total}, 0)
-return newArray}
-
 function addHTML () {
   let b = `<div class="rest-first"> 
     <p class="stage">I этап</p> 
     <div class="rest-green">
       <img src="./assets/MythicCards/greenCard.png">
-      <p class="number">${getLength2(chosenCards, 'green', 'firstStage')}</p>
+      <p class="number">${getLength(chosenCards, 'green', 'firstStage')}</p>
     </div>
     <div class="rest-brown">
       <img src="./assets/MythicCards/brownCard.png">
-      <p class="number">${getLength2(chosenCards, 'brown', 'firstStage')}</p>
+      <p class="number">${getLength(chosenCards, 'brown', 'firstStage')}</p>
     </div>
     <div class="rest-blue">
       <img src="./assets/MythicCards/blueCard.png">
-      <p class="number">${getLength2(chosenCards, 'blue', 'firstStage')}</p>
+      <p class="number">${getLength(chosenCards, 'blue', 'firstStage')}</p>
     </div>
   </div>
   <div class="rest-second">
     <p class="stage">II этап</p> 
     <div class="rest-green">
       <img src="./assets/MythicCards/greenCard.png">
-      <p class="number">${getLength2(chosenCards, 'green', 'secondStage')}</p>
+      <p class="number">${getLength(chosenCards, 'green', 'secondStage')}</p>
     </div>
     <div class="rest-brown">
       <img src="./assets/MythicCards/brownCard.png">
-      <p class="number">${getLength2(chosenCards, 'brown', 'secondStage')}</p>
+      <p class="number">${getLength(chosenCards, 'brown', 'secondStage')}</p>
     </div>
     <div class="rest-blue">
       <img src="./assets/MythicCards/blueCard.png">
-      <p class="number">${getLength2(chosenCards, 'blue', 'secondStage')}</p>
+      <p class="number">${getLength(chosenCards, 'blue', 'secondStage')}</p>
     </div>
   </div>
   <div class="rest-third">
     <p class="stage">III этап</p> 
     <div class="rest-green">
       <img src="./assets/MythicCards/greenCard.png">
-      <p class="number">${getLength2(chosenCards, 'green', 'thirdStage')}</p>
+      <p class="number">${getLength(chosenCards, 'green', 'thirdStage')}</p>
     </div>
     <div class="rest-brown">
       <img src="./assets/MythicCards/brownCard.png">
-      <p class="number">${getLength2(chosenCards, 'brown', 'thirdStage')}</p>
+      <p class="number">${getLength(chosenCards, 'brown', 'thirdStage')}</p>
     </div>
     <div class="rest-blue">
       <img src="./assets/MythicCards/blueCard.png">
-      <p class="number">${getLength2(chosenCards, 'blue', 'thirdStage')}</p>
+      <p class="number">${getLength(chosenCards, 'blue', 'thirdStage')}</p>
     </div>
     </div>`
   return b
@@ -304,42 +273,46 @@ function addHTML () {
     stage = chosenCards[chosenCards.length-1]['stage']
     chosenCards.pop()
     restNumber.innerHTML = addHTML()
-} else {
-    tossblock.classList.add('transparent')
-    complex.classList.add('transparent')
+  } else {
+    addTransparentToss()
     src = "./assets/mythicCardBackground.png"
     acientId.forEach(el => { 
       el.firstChild.classList.remove('aactive')
       isChosen = false})
-    diffBtn.forEach(el => {
-      el.classList.remove('aactive')
-      diffChosen = false
-    }) 
+      changeDiffBtn()
     cardBack.removeEventListener('click', showCard)
     complex.removeEventListener('click', changeDifficulty)
   }
-cardFace.innerHTML = `<img src=${src} alt="pack face">`
+  cardFace.innerHTML = `<img src=${src} alt="pack face">`
+}
+
+//функция определения количества карт в колоде - счетчик 
+function getLength(array, color, stage) {
+  let newArray = array.reduce((total, el) => {
+    if (el['color'] === color && el['stage'] === stage) {
+      total += 1
+    } else {
+        total
+      }
+    return total}, 0)
+return newArray
 }
 
 
-function getLength2(array, color, stage) {
-  let newArray = array.reduce((total, el) => {
-  if (el['color'] === color && el['stage'] === stage) {
-    total += 1
-  } else {total}
-return total}, 0)
-return newArray}
-
-
-const changeDiffBtn = () => {diffBtn.forEach(el => {
+const changeDiffBtn = () => {
+  diffBtn.forEach(el => {
   el.classList.remove('aactive')
   diffChosen = false
+  addTransparentToss()
+  cardBack.removeEventListener('click', showCard)})
+}
+
+const addTransparentToss = () => {
   restNumber.style.display = 'none'
   tossblock.classList.add('transparent')
   cardFace.classList.add('hidden')
-}) }
-
-
+}
+//смена уровня сложности
 function changeDifficulty (event) {
   changeDiffBtn()
 
@@ -347,7 +320,6 @@ function changeDifficulty (event) {
   brownCards = cardsDataBrown
   blueCards = cardsDataBlue
  
-
   let clickedDifficulty = event.target
   let clickedBtn = document.getElementById(clickedDifficulty.id)
 
@@ -366,86 +338,50 @@ function changeDifficulty (event) {
 }
 
 function getArrayEasy () {
-
   greenCards = greenCards.filter(el => el['difficulty'] !== 'hard')
   brownCards = brownCards.filter(el => el['difficulty'] !== 'hard')
   blueCards = blueCards.filter(el => el['difficulty'] !== 'hard')
- 
-  first = getFirstStage()
-  second = getSecondStage()
-  third = getThirdStage()
-
-  first.forEach((el) => {
-    el.stage = 'firstStage'}) 
-  second.forEach((el) => {
-    el.stage = 'secondStage'}) 
-  third.forEach((el) => {
-    el.stage = 'thirdStage'}) 
-
-  objectStages.firstStage = sortCards(first)
-  objectStages.secondStage = sortCards(second)
-  objectStages.thirdStage = sortCards(third)
-  return objectStages
+  getArrayNormal ()
 }
-
 
 function getArrayHard () {
   greenCards = greenCards.filter(el => el['difficulty'] !== 'easy')
   brownCards = brownCards.filter(el => el['difficulty'] !== 'easy')
   blueCards = blueCards.filter(el => el['difficulty'] !== 'easy')
- 
   getArrayNormal ()
-  
- /* first = getFirstStage()
-  second = getSecondStage()
-  third = getThirdStage()
-
-  first.forEach((el) => {
-    el.stage = 'firstStage'}) 
-  second.forEach((el) => {
-    el.stage = 'secondStage'}) 
-  third.forEach((el) => {
-    el.stage = 'thirdStage'}) 
-  objectStages.firstStage = sortCards(first)
-  objectStages.secondStage = sortCards(second)
-  objectStages.thirdStage = sortCards(third)
-  return objectStages*/
 }
-
 
 function getArrayTooEasyHard () {
   let allCards
   let snowFlakesCards
   let restCards
-if (difficultyLevel === 'too-easy') {
-    allCards = [...greenCards, ...brownCards, ...blueCards].filter(el => el['difficulty'] !== 'hard')
-    snowFlakesCards = [...greenCards.filter(el => el['difficulty'] === 'easy'), ...brownCards.filter(el => el['difficulty'] === 'easy'), ...blueCards.filter(el => el['difficulty'] === 'easy')] 
-    restCards = allCards.diff(snowFlakesCards)
-} 
+  if (difficultyLevel === 'too-easy') {
+      allCards = [...greenCards, ...brownCards, ...blueCards].filter(el => el['difficulty'] !== 'hard')
+      snowFlakesCards = [...greenCards.filter(el => el['difficulty'] === 'easy'), ...brownCards.filter(el => el['difficulty'] === 'easy'), ...blueCards.filter(el => el['difficulty'] === 'easy')] 
+      restCards = allCards.diff(snowFlakesCards)
+  } 
 
-if (difficultyLevel === 'too-hard') {
-   allCards = [...greenCards, ...brownCards, ...blueCards].filter(el => el['difficulty'] !== 'easy')
-   snowFlakesCards = [...greenCards.filter(el => el['difficulty'] === 'hard'), ...brownCards.filter(el => el['difficulty'] === 'hard'), ...blueCards.filter(el => el['difficulty'] === 'hard')] 
-   restCards = allCards.diff(snowFlakesCards)
-} 
+  if (difficultyLevel === 'too-hard') {
+    allCards = [...greenCards, ...brownCards, ...blueCards].filter(el => el['difficulty'] !== 'easy')
+    snowFlakesCards = [...greenCards.filter(el => el['difficulty'] === 'hard'), ...brownCards.filter(el => el['difficulty'] === 'hard'), ...blueCards.filter(el => el['difficulty'] === 'hard')] 
+    restCards = allCards.diff(snowFlakesCards)
+  } 
 
   let combination = setPackRule()
   let countGreen = combination.reduce((count, obj) => {
   return count + obj['greenCards']
-}, 0) 
-let countBrown = combination.reduce((count, obj) => {
-  return count + obj['brownCards']
-}, 0) 
-let countBlue = combination.reduce((count, obj) => {
-  return count + obj['blueCards']
-}, 0) 
+  }, 0) 
+  let countBrown = combination.reduce((count, obj) => {
+    return count + obj['brownCards']
+  }, 0) 
+  let countBlue = combination.reduce((count, obj) => {
+    return count + obj['blueCards']
+  }, 0) 
 
-  
  let addCard = []
  let sfgreen = snowFlakesCards.filter(el => el['color'] === 'green').length
  let sfbrown = snowFlakesCards.filter(el => el['color'] === 'brown').length
  let sfblue = snowFlakesCards.filter(el => el['color'] === 'blue').length
-
 
   if (sfgreen < countGreen) {
     let dif = countGreen - sfgreen
@@ -467,16 +403,15 @@ let countBlue = combination.reduce((count, obj) => {
      }
    }
 
-
-   if (sfblue < countBlue) {
-    let dif = countBlue - sfblue
-    let blueCardsNormal = restCards.filter(el => el['color'] === 'blue')
-     for (let i = dif; i !=0; i--) {
-       let random = Math.floor(Math.random()*blueCardsNormal.length)
-       addCard.push(blueCardsNormal[random])
-       blueCardsNormal.splice(random, 1)
-     }
-   }
+  if (sfblue < countBlue) {
+   let dif = countBlue - sfblue
+   let blueCardsNormal = restCards.filter(el => el['color'] === 'blue')
+    for (let i = dif; i !=0; i--) {
+      let random = Math.floor(Math.random()*blueCardsNormal.length)
+      addCard.push(blueCardsNormal[random])
+      blueCardsNormal.splice(random, 1)
+    }
+  }
 
 let chosenEasyCards = snowFlakesCards.concat(addCard)
 
