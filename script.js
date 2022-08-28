@@ -105,13 +105,14 @@ function changeAcient (event) {
     }
     chosenCards = [...objectStages['firstStage'], ...objectStages['secondStage'],...sortCards(objectStages['thirdStage'])].reverse()    
     restNumber.innerHTML = addHTML()
+    console.log('Привет, проверяющий! Может быть, тебе будет удобнее проверять мои карты и алгоритм отбора по сложности, если ты будешь видеть массив, формируемый в итоге для показа \n', chosenCards)
   }
 
 function getArrayNormal () {
   first = getFirstStage()
   second = getSecondStage()
   third = getThirdStage()
-//добавляем в объект параметр стадии для счетчика
+//добавляем в объект ключ-свойство стадии для счетчика
   first.forEach((el) => {
     el.stage = 'firstStage'}) 
   second.forEach((el) => {
@@ -133,7 +134,8 @@ if (!isChosen) {
   cardFace.classList.add('hidden')
 } else {
   complex.classList.remove('transparent')
-  restNumber.style.display = 'block'}
+  restNumber.style.display = 'block'
+}
 }
 
 //меняем класс у кнопок сложности при переключении
@@ -281,6 +283,7 @@ function addHTML () {
       isChosen = false})
       changeDiffBtn()
     cardBack.removeEventListener('click', showCard)
+    complex.classList.add('transparent')
     complex.removeEventListener('click', changeDifficulty)
   }
   cardFace.innerHTML = `<img src=${src} alt="pack face">`
@@ -421,3 +424,5 @@ let chosenEasyCards = snowFlakesCards.concat(addCard)
 
  getArrayNormal ()
 }
+
+
