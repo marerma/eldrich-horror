@@ -105,7 +105,7 @@ function changeAcient (event) {
     }
     chosenCards = [...objectStages['firstStage'], ...objectStages['secondStage'],...sortCards(objectStages['thirdStage'])].reverse()    
     restNumber.innerHTML = addHTML()
-    console.log('Привет, проверяющий! Может быть, тебе будет удобнее проверять мои карты и алгоритм отбора по сложности, если ты будешь видеть массив, формируемый в итоге для показа \n', chosenCards)
+    console.log('Привет, проверяющий! Может быть, тебе будет удобнее проверять мои карты и алгоритм отбора по сложности, если ты будешь видеть массив, формируемый в итоге для показа карт. В нем сразу видно, какой сложности карты. Надеюсь, что я правильно поняла правила отбора)) \n', chosenCards)
   }
 
 function getArrayNormal () {
@@ -266,13 +266,9 @@ function addHTML () {
  function showCard () {
   cardFace.classList.remove('hidden')
   let src
-  let id 
-  let stage
 
  if (chosenCards.length > 0) {
     src = chosenCards[chosenCards.length-1]['cardFace']
-    id = chosenCards[chosenCards.length-1]['id']
-    stage = chosenCards[chosenCards.length-1]['stage']
     chosenCards.pop()
     restNumber.innerHTML = addHTML()
   } else {
